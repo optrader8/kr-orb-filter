@@ -49,21 +49,22 @@ enhanced_orb:
 # Volatility Breakout Parameters
 volatility_breakout:
   enabled: true
-  atr_period: 14
-  contraction_threshold: 0.7   # 30% below average range
-  expansion_threshold: 1.5     # 50% above average range
-  nr_periods: [4, 5, 6, 7, 10]  # NR pattern periods to check
-  target_multiplier_min: 2.0   # Minimum target: 2x narrow range
-  target_multiplier_max: 3.0   # Maximum target: 3x narrow range
-  volume_confirmation: true
+  volatility_lookback: 20
+  contraction_threshold: 25    # percentile threshold
+  expansion_multiplier: 2.5
+  volume_threshold: 1.2
+  min_contraction_days: 3
 
 # Gap Fade Strategy Parameters
 gap_fade:
   enabled: true
-  large_gap_threshold: 0.02    # 2% gap threshold
-  fill_percentage: 0.5         # 50% gap fill trigger
-  trend_alignment_required: true
-  max_risk_gap_size: 0.05      # Don't trade gaps > 5%
+  min_gap_percent: 0.5         # 0.5% minimum gap
+  max_gap_percent: 3.0         # 3% maximum gap
+  min_gap_atr_multiple: 0.5    # 0.5x ATR minimum
+  max_gap_atr_multiple: 2.0    # 2x ATR maximum
+  low_volume_threshold: 0.7    # Low volume ratio
+  high_volume_threshold: 1.5   # High volume ratio
+  max_entry_time: 120          # 2 hours after open
 
 # Moving Average Strategy Parameters
 moving_averages:
