@@ -1,65 +1,65 @@
-# PRD.md ? KR?ORB?Filter
+# PRD.md – KR·ORB·Filter
 
-## 1. Goal & Non?Goals
+## 1. 목표 및 비목표
 
-**Goal**: Korean equities screener + intraday ORB breakout alerting with backtests, to operationalize Crabel?style short?term opportunity detection.
-**Non?Goals**: Full broker execution platform; portfolio optimizer; exotic derivatives integrations.
+**목표**: Crabel 스타일의 단기 기회 탐지를 운영화하기 위한 한국 주식 스크리너 + 장중 ORB 돌파 알림 및 백테스트.
+**비목표**: 완전한 브로커 실행 플랫폼; 포트폴리오 최적화기; 이국적 파생상품 통합.
 
-## 2. Personas
+## 2. 사용자 유형
 
-* **Discretionary Trader (D?T)**: Wants curated daily list + timely intraday alerts.
-* **Quant Tinkerer (Q?T)**: Needs editable code, reproducible backtests, CSV exports.
-* **Risk?Aware PM (R?PM)**: Focus on stability, risk metrics, audit logs.
+* **재량적 트레이더 (D-T)**: 큐레이션된 일일 목록 + 시기적절한 장중 알림을 원함.
+* **퀀트 틴커러 (Q-T)**: 편집 가능한 코드, 재현 가능한 백테스트, CSV 내보내기가 필요함.
+* **리스크 인식 PM (R-PM)**: 안정성, 리스크 지표, 감사 로그에 집중.
 
-## 3. Use Cases
+## 3. 사용 사례
 
-1. Daily open plan: NR7 candidates with scores & liquidity filters.
-2. Intraday watch: ORB windows, gap bias; push alerts on valid breakouts.
-3. Post?session review: EOD signals, hit?rate, exceptions.
-4. Research: Parameter sweep, universes (KOSPI200, thematics), factors.
+1. 일일 개장 계획: 점수 및 유동성 필터가 있는 NR7 후보.
+2. 장중 모니터링: ORB 윈도우, 갭 바이어스; 유효한 돌파에 대한 푸시 알림.
+3. 장 후 검토: 종가 신호, 적중률, 예외사항.
+4. 연구: 파라미터 스윕, 유니버스 (KOSPI200, 테마틱), 팩터.
 
-## 4. Scope
+## 4. 범위
 
 * **MVP**
 
-  * Data: pykrx daily; intraday via simulated replay (CSV) + simple adapter
-  * Features: NR7, ORB, Gap, MOO, KOSPI/sector bias
-  * Screener + ranker; backtest engine; Slack/Telegram alerts
-  * Storage: SQLite; exports (CSV/Parquet)
-* **Phase 2**
+  * 데이터: pykrx 일일; 시뮬레이션된 리플레이(CSV) + 간단한 어댑터를 통한 장중
+  * 특성: NR7, ORB, 갭, MOO, KOSPI/섹터 바이어스
+  * 스크리너 + 랭커; 백테스트 엔진; Slack/Telegram 알림
+  * 저장소: SQLite; 내보내기 (CSV/Parquet)
+* **2단계**
 
-  * Live intraday via broker APIs; dashboard (FastAPI + simple UI)
-  * Multi?universe & sector models; advanced risk (vol targeting)
-* **Phase 3**
+  * 브로커 API를 통한 실시간 장중; 대시보드 (FastAPI + 간단한 UI)
+  * 다중 유니버스 & 섹터 모델; 고급 리스크 (변동성 타겟팅)
+* **3단계**
 
-  * Portfolio rules; execution hooks; Postgres; Docker deploy
+  * 포트폴리오 규칙; 실행 훅; Postgres; Docker 배포
 
-## 5. KPIs
+## 5. KPI
 
-* Coverage: �� 90% of KOSPI200, top?liquidity KOSDAQ
-* Alert Latency: �� 5s from breakout detection (sim/live)
-* Data Freshness: Daily EOD by 18:00 KST
-* System Reliability: 99% uptime during market hours (MVP target: 97%)
-* Backtest Reproducibility: Same seed �� identical results
+* 커버리지: KOSPI200의 ≥ 90%, 상위 유동성 KOSDAQ
+* 알림 지연시간: 돌파 탐지에서 ≤ 5초 (시뮬레이션/실시간)
+* 데이터 신선도: KST 18:00까지 일일 종가
+* 시스템 신뢰성: 시장 시간 중 99% 가동시간 (MVP 목표: 97%)
+* 백테스트 재현성: 동일한 시드 → 동일한 결과
 
-## 6. Functional Requirements (high level)
+## 6. 기능 요구사항 (고수준)
 
-* Import daily OHLCV; compute NR7 & bias; output ranked list.
-* Intraday: compute ORB window; detect first valid breakout; de?dupe alerts.
-* Risk checks: liquidity, price bands, exclude halts/special treatments.
-* Backtests: vectorized, paramizable; output metrics & trade logs.
-* Notifications: Slack/Telegram; throttle & cooldown per symbol.
-* Configuration via `.env` & `config.py`.
+* 일일 OHLCV 가져오기; NR7 & 바이어스 계산; 순위 목록 출력.
+* 장중: ORB 윈도우 계산; 첫 번째 유효한 돌파 탐지; 알림 중복 제거.
+* 리스크 체크: 유동성, 가격대, 거래정지/특별취급 제외.
+* 백테스트: 벡터화, 파라미터화 가능; 지표 & 거래 로그 출력.
+* 알림: Slack/Telegram; 심볼별 제한 & 쿨다운.
+* `.env` & `config.py`를 통한 설정.
 
-## 7. Non?Functional Requirements
+## 7. 비기능 요구사항
 
-* **Performance**: Daily screen �� 2 min for 2,000+ symbols on laptop.
-* **Reliability**: Retry data sources, failover to cache.
-* **Observability**: Structured logs; alert send result codes.
-* **Security**: Secrets in env; minimal scopes; no PII.
-* **Portability**: Linux/Windows dev; Dockerfile in Phase 3.
+* **성능**: 노트북에서 2,000+ 심볼에 대한 일일 스크린 ≤ 2분.
+* **신뢰성**: 데이터 소스 재시도, 캐시로 페일오버.
+* **관찰가능성**: 구조화된 로그; 알림 전송 결과 코드.
+* **보안**: 환경에서 시크릿; 최소 범위; PII 없음.
+* **이식성**: Linux/Windows 개발; 3단계에서 Dockerfile.
 
-## 8. Architecture (MVP)
+## 8. 아키텍처 (MVP)
 
 ```
             +-------------------+
@@ -67,44 +67,43 @@
             +---------+---------+
                       |
            +----------v----------+
-           |  Screener (daily)   |<---+   Bias (KOSPI/sector)
+           |  스크리너 (일일)     |<---+   바이어스 (KOSPI/섹터)
            +----------+----------+    |
                       |               |
              +--------v--------+      |
-             |  Feature Calc   |------+
+             |  특성 계산       |------+
              +--------+--------+
                       |
            +----------v----------+
-           |    Data Loaders     |  (pykrx / CSV / broker adapter)
+           |    데이터 로더       |  (pykrx / CSV / 브로커 어댑터)
            +----------+----------+
                       |
              +--------v--------+
-             |   Storage DB    |  SQLite / Parquet
+             |   저장소 DB     |  SQLite / Parquet
              +--------+--------+
                       |
            +----------v----------+
-           |  Backtest Engine    |
+           |  백테스트 엔진       |
            +----------+----------+
                       |
              +--------v--------+
-             |  Notifiers      |
+             |  알리미          |
              +-----------------+
 ```
 
-## 9. Risks & Mitigations
+## 9. 리스크 및 완화
 
-* **Intraday data quality / latency** �� Start with replay/sim; broker adapter behind feature flag.
-* **False breakouts** �� Require confirm filters (min volume since open, bias alignment).
-* **Overfitting** �� Cross?validation by regime; out?of?sample tests.
-* **Costs** �� Include fees/slippage in backtests; add realistic order sizing.
+* **장중 데이터 품질 / 지연시간** → 리플레이/시뮬레이션으로 시작; 기능 플래그 뒤의 브로커 어댑터.
+* **거짓 돌파** → 확인 필터 요구 (시가 이후 최소 거래량, 바이어스 정렬).
+* **과적합** → 체제별 교차 검증; 샘플 외 테스트.
+* **비용** → 백테스트에 수수료/슬리피지 포함; 현실적인 주문 크기 추가.
 
-## 10. Milestones
+## 10. 마일스톤
 
-* **M0 (Week 1)**: Repo scaffold, loaders (daily), NR7 feature, basic screener.
-* **M1 (Week 2)**: ORB calc + simulated intraday; Slack alerts.
-* **M2 (Week 3)**: Backtest engine + metrics; CLI UX & docs.
-* **M3 (Week 4)**: Bias filters; ranking model; Telegram; stability pass.
-* **M4 (Phase 2)**: Live intraday adapter; FastAPI dashboard.
+* **M0 (1주차)**: 저장소 스캐폴드, 로더(일일), NR7 특성, 기본 스크리너.
+* **M1 (2주차)**: ORB 계산 + 시뮬레이션된 장중; Slack 알림.
+* **M2 (3주차)**: 백테스트 엔진 + 지표; CLI UX & 문서.
+* **M3 (4주차)**: 바이어스 필터; 랭킹 모델; Telegram; 안정성 패스.
+* **M4 (2단계)**: 실시간 장중 어댑터; FastAPI 대시보드.
 
 ---
-

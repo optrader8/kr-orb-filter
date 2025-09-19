@@ -1,6 +1,6 @@
 # requirements.md ? EARS (Easy Approach to Requirements Syntax)
 
-> Legend: **Ubiquitous** (general), **Event?Driven** (When ��, the system shall ��), **State?Driven** (While ��), **Unwanted** (If ��, the system shall prevent ��), **Optional** (Where ��, the system may ��).
+> Legend: **Ubiquitous** (general), **Event?Driven** (When ??, the system shall ??), **State?Driven** (While ??), **Unwanted** (If ??, the system shall prevent ??), **Optional** (Where ??, the system may ??).
 
 ## 1. Data Ingestion
 
@@ -13,7 +13,7 @@
 ## 2. Feature Engineering
 
 * **U**: The system shall compute **Range = High ? Low** per day.
-* **U**: The system shall label **NR7** when today��s Range is the **rolling 7?day minimum**.
+* **U**: The system shall label **NR7** when today??s Range is the **rolling 7?day minimum**.
 * **U**: The system shall compute **Gap% = (Open ? PrevClose) / PrevClose**.
 * **U**: The system shall compute **Move?off?Open = |Close ? Open| / Range**.
 * **U**: The system shall compute **KOSPI 5/20MA slope** and **sector momentum** as **bias**.
@@ -21,7 +21,7 @@
 
 ## 3. Screening & Ranking
 
-* **U**: The system shall apply **liquidity filter** using **daily trading value �� MIN\_DAILY\_TRADING\_VALUE**.
+* **U**: The system shall apply **liquidity filter** using **daily trading value ?? MIN\_DAILY\_TRADING\_VALUE**.
 * **U**: The system shall produce a **ranked list** combining NR7, Gap, MOO, and bias scores.
 * **E**: When no symbols pass filters, the system shall **emit an empty report** and a **warning log**.
 * **U**: The system shall persist **screen results** with parameters used.
@@ -37,7 +37,7 @@
 
 ## 5. Risk & Trade Rules (Signal Level)
 
-* **U**: The system shall compute **ATR?based stop** = ATR �� RISK\_ATR\_MULT for evaluation.
+* **U**: The system shall compute **ATR?based stop** = ATR ?? RISK\_ATR\_MULT for evaluation.
 * **U**: The system shall evaluate **take?profit** via **Risk\:Reward (RR)** parameter.
 * **U**: The system shall limit **MAX\_POSITIONS** concurrently flagged per run.
 * **O**: Where sector correlation is high, the system may **throttle** multi?hits in the same sector.
@@ -74,7 +74,12 @@
 
 ## 10. Quality Targets
 
-* **U**: The system shall run the **daily screen �� 2 minutes** on a commodity laptop for 2,000 symbols.
+* **U**: The system shall run the **daily screen ?? 2 minutes** on a commodity laptop for 2,000 symbols.
 * **U**: The system shall achieve **deterministic backtests** given fixed inputs and seed.
 * **O**: Where Docker is available, the system may provide a **containerized** deployment recipe.
 
+## 11. Dependency Notes
+
+* **U**: The codebase shall rely on `pandas`, `numpy`, `pyarrow`, and `pydantic` for core data handling.
+* **U**: Notification integrations shall use `requests` with timeouts configured.
+* **O**: Optional providers such as `pykrx` may be installed to enable live data ingestion; otherwise the CSV fallback must remain operational.
