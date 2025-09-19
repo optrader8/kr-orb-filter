@@ -1,0 +1,209 @@
+# Base Configuration
+# Core system settings and defaults
+
+# System Information
+system:
+  name: "KR-ORB-Filter with Linda Integration"
+  version: "2.0.0"
+  timezone: "Asia/Seoul"
+  locale: "ko_KR"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_rotation: true
+  max_file_size: "10MB"
+  backup_count: 5
+  log_directory: "logs"
+
+# Data Configuration
+data:
+  # Cache settings
+  cache:
+    enabled: true
+    directory: "data/cache"
+    max_age_days: 30
+    compression: "gzip"
+
+  # Storage settings
+  storage:
+    primary_format: "parquet"
+    backup_format: "csv"
+    directory: "data/store"
+    partition_by: "date"
+
+  # Data sources
+  sources:
+    primary: "pykrx"
+    fallback: "csv"
+    psychology_data: "csv"  # Market psychology data source
+
+  # Data validation
+  validation:
+    enabled: true
+    check_missing_values: true
+    check_outliers: true
+    outlier_threshold: 3.0  # Standard deviations
+
+# Performance Settings
+performance:
+  # Processing limits
+  max_symbols_per_batch: 100
+  max_concurrent_downloads: 5
+  request_delay_seconds: 0.1
+
+  # Memory management
+  chunk_size: 1000
+  low_memory_mode: false
+
+  # Caching
+  enable_calculation_cache: true
+  cache_technical_indicators: true
+
+# Database Configuration
+database:
+  # SQLite settings (default)
+  sqlite:
+    path: "data/kr_orb.db"
+    timeout: 30
+    enable_wal: true
+
+  # PostgreSQL settings (optional)
+  postgresql:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    database: "kr_orb"
+    schema: "public"
+
+# API Configuration
+api:
+  enabled: false
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_enabled: true
+  rate_limiting: true
+  max_requests_per_minute: 60
+
+# Security Settings
+security:
+  # Environment variables
+  env_file: ".env"
+  secrets_file: ".secrets"
+
+  # API security
+  require_api_key: false
+  jwt_secret_key: null
+  session_timeout: 3600
+
+# Default Strategy Settings
+default_strategies:
+  # Base strategies (original)
+  base_enabled: true
+  base_strategies:
+    - "nr7_orb"
+    - "momentum_screen"
+
+  # Linda strategies
+  linda_enabled: true
+  linda_strategies:
+    - "holy_grail"
+    - "enhanced_orb"
+    - "volatility_breakout"
+
+# Alert Configuration
+alerts:
+  enabled: true
+  max_per_hour: 20
+  cooldown_minutes: 15
+
+  # Channels
+  channels:
+    slack:
+      enabled: false
+      webhook_url: null
+      channel: "#trading"
+
+    telegram:
+      enabled: false
+      bot_token: null
+      chat_id: null
+
+    email:
+      enabled: false
+      smtp_server: null
+      smtp_port: 587
+
+# Backtesting Defaults
+backtesting:
+  default_start_date: "2020-01-01"
+  default_end_date: null  # Use current date
+  initial_capital: 10000000  # 10M KRW
+  currency: "KRW"
+
+  # Costs
+  commission_rate: 0.0015    # 0.15%
+  slippage_bps: 2           # 2 basis points
+  borrowing_cost: 0.03      # 3% annual
+
+# Monitoring Configuration
+monitoring:
+  health_check_interval: 300  # 5 minutes
+  metrics_collection: true
+  performance_tracking: true
+
+  # System metrics
+  track_memory_usage: true
+  track_cpu_usage: true
+  track_disk_usage: true
+
+# Development Settings
+development:
+  debug_mode: false
+  verbose_logging: false
+  enable_profiling: false
+  mock_data_sources: false
+
+# Feature Flags
+feature_flags:
+  linda_integration: true
+  advanced_risk_management: true
+  market_psychology: true
+  multi_strategy_coordination: true
+  real_time_monitoring: true
+
+# Backup and Recovery
+backup:
+  enabled: true
+  frequency: "daily"
+  retention_days: 30
+  backup_directory: "backups"
+  include_logs: false
+
+# Compliance and Reporting
+compliance:
+  trade_reporting: true
+  audit_trail: true
+  export_formats: ["csv", "xlsx", "json"]
+
+# Resource Limits
+limits:
+  max_memory_mb: 2048
+  max_cpu_percent: 80
+  max_disk_space_gb: 10
+
+# Error Handling
+error_handling:
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  circuit_breaker_enabled: true
+  fallback_strategies: true
+
+# Maintenance
+maintenance:
+  cleanup_old_data: true
+  cleanup_frequency: "weekly"
+  vacuum_database: true
+  optimize_tables: true

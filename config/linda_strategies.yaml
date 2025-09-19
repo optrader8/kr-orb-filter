@@ -1,0 +1,161 @@
+# Linda Raschke Strategy Parameters
+# Configuration for all Linda-specific trading strategies
+
+# Holy Grail Setup Parameters
+holy_grail:
+  enabled: true
+  adx_period: 14
+  adx_strong_threshold: 30.0
+  adx_weak_threshold: 20.0
+  pullback_min_bars: 3
+  pullback_max_bars: 5
+  rsi_period: 14
+  rsi_oversold: 30
+  rsi_overbought: 70
+  entry_confirmation_required: true
+
+# Turtle Soup Strategy Parameters
+turtle_soup:
+  enabled: true
+  lookback_period: 20
+  confirmation_required: true
+  min_breakout_size: 0.5  # Minimum % breakout before failure
+  risk_multiplier: 1.0    # Risk as multiple of failed breakout range
+
+# Anti-Swing Strategy Parameters
+anti_swing:
+  enabled: true
+  rsi2_period: 2
+  rsi2_oversold: 10
+  rsi2_overbought: 90
+  stoch_k_period: 14
+  stoch_d_period: 3
+  min_extreme_days: 2     # Minimum days in extreme territory
+  target_ma_period: 5     # Target return to N-period MA
+  strong_move_days: 3     # Days to measure strong directional move
+  strong_move_threshold: 0.05  # 5% move threshold
+
+# Enhanced ORB Parameters
+enhanced_orb:
+  enabled: true
+  window_minutes: 30      # 30-minute opening range
+  window_start: "09:00"   # KST
+  window_end: "09:30"     # KST
+  volume_threshold: 1.5   # Multiple of 20-day average volume
+  gap_small_threshold: 0.01    # 1% for small gaps
+  gap_large_threshold: 0.02    # 2% for large gaps
+  risk_multiplier: 1.5    # Risk as multiple of ORB or prev day range
+
+# Volatility Breakout Parameters
+volatility_breakout:
+  enabled: true
+  atr_period: 14
+  contraction_threshold: 0.7   # 30% below average range
+  expansion_threshold: 1.5     # 50% above average range
+  nr_periods: [4, 5, 6, 7, 10]  # NR pattern periods to check
+  target_multiplier_min: 2.0   # Minimum target: 2x narrow range
+  target_multiplier_max: 3.0   # Maximum target: 3x narrow range
+  volume_confirmation: true
+
+# Gap Fade Strategy Parameters
+gap_fade:
+  enabled: true
+  large_gap_threshold: 0.02    # 2% gap threshold
+  fill_percentage: 0.5         # 50% gap fill trigger
+  trend_alignment_required: true
+  max_risk_gap_size: 0.05      # Don't trade gaps > 5%
+
+# Moving Average Strategy Parameters
+moving_averages:
+  enabled: true
+  fast_ema_period: 20
+  slow_ema_period: 50
+  ma3_period: 3
+  ma3_stop_distance: 0.005     # 0.5% stop distance from 3MA
+  crossover_volume_threshold: 1.5  # Volume expansion for crossovers
+  trend_strength_threshold: 0.02   # 2% EMA separation for strong trend
+
+# Risk Management Parameters
+risk_management:
+  position_size_method: "2_percent_rule"
+  max_risk_per_trade: 0.02     # 2% maximum risk per trade
+  max_portfolio_heat: 0.08     # 8% maximum total exposure
+  correlation_threshold: 0.7   # Reduce size if correlation > 70%
+
+  # Stop Loss Types
+  stop_types:
+    technical: true            # Support/resistance stops
+    volatility: true           # ATR-based stops
+    time: true                # Time-based stops
+    money_management: true     # 2% rule stops
+
+  # Stop Parameters
+  atr_stop_multiplier: 1.5
+  technical_stop_buffer: 0.01  # 1% buffer beyond S/R
+  max_time_in_trade: 5         # Days
+
+  # Profit Taking
+  scale_out_enabled: true
+  first_target_rr: 1.0         # 1:1 risk/reward
+  second_target_rr: 2.0        # 2:1 risk/reward
+  trail_final_third: true
+  trailing_stop_atr_mult: 1.0
+
+# Market Psychology Integration
+market_psychology:
+  enabled: true
+  vix_high_threshold: 30.0
+  vix_low_threshold: 15.0
+  put_call_high_threshold: 1.3
+  put_call_low_threshold: 0.7
+  fii_zscore_threshold: 2.0
+  sentiment_weight: 0.2        # Weight in overall scoring
+
+# Performance Targets
+performance_targets:
+  trend_following_win_rate: 0.65      # 65% target
+  mean_reversion_win_rate: 0.45       # 45% target
+  min_risk_reward: 1.5                # Minimum 1.5:1 R/R
+  max_drawdown: 0.20                  # 20% maximum drawdown
+  target_sharpe: 1.5                  # Target Sharpe ratio
+
+# Market Timing
+market_timing:
+  optimal_trading_windows:
+    - start: "10:30"
+      end: "11:30"
+      description: "First optimal window"
+    - start: "14:30"
+      end: "15:30"
+      description: "Second optimal window"
+
+  avoid_first_minutes: 30      # Avoid first 30 minutes
+  avoid_last_minutes: 30       # Avoid last 30 minutes
+
+# Strategy Combination Rules
+strategy_combination:
+  max_strategies_per_symbol: 2
+  strategy_priority:
+    - "holy_grail"
+    - "enhanced_orb"
+    - "volatility_breakout"
+    - "turtle_soup"
+    - "anti_swing"
+    - "gap_fade"
+
+  conflict_resolution: "highest_confidence"
+
+# Backtesting Parameters
+backtesting:
+  default_universe: "KOSPI200"
+  default_start_date: "2020-01-01"
+  commission_rate: 0.0015      # 0.15% commission
+  slippage_bps: 2              # 2 basis points slippage
+
+# Alert and Notification Settings
+notifications:
+  strategy_specific_messages: true
+  include_confidence_score: true
+  include_risk_metrics: true
+  max_alerts_per_hour: 10
+  cooldown_minutes: 30

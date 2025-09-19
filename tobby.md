@@ -1,130 +1,85 @@
-# Tobby.md ? Toby Crabel¡¯s Trading Principles
+# Toby Crabel Trading Principles
 
-Toby Crabel is a renowned short?term trader and the author of *Day Trading with Short?Term Price Patterns & Opening Range Breakout (ORB)*. His systematic and quantitative style emphasizes volatility patterns, breakout structures, and disciplined risk management. This document summarizes his **core principles and techniques** in a structured way.
-
----
-
-## ?? Background
-
-* **Trader & Fund Manager**: Founder of Crabel Capital Management.
-* Known for avoiding losing years over decades of fund operation.
-* Specializes in short?term futures and equity index strategies.
-* Key publication (1990): *Day Trading With Short?Term Price Patterns & Opening Range Breakout*.
+Toby Crabel is a renowned short-term trader and author of *Day Trading with Short-Term Price Patterns & Opening Range Breakout (ORB)*. His research anchors the KR-ORB-Filter project, emphasizing volatility regimes, breakout mechanics, and strict risk controls.
 
 ---
 
-## ?? Core Principles
+## Snapshot
 
-### 1. **Opening Range Breakout (ORB)**
-
-* Define the **opening range**: the high and low during the first X minutes after market open (commonly 5, 15, or 30 minutes).
-* **Signals**:
-
-  * **Long breakout** ¡æ Price crosses above the opening range high.
-  * **Short breakout** ¡æ Price crosses below the opening range low.
-* **Logic**: The opening captures liquidity and directional bias. Breakouts often align with strong day?long trends.
-
-### 2. **Short?Term Price Patterns**
-
-* Study patterns of **Open, High, Low, Close (OHLC)** and relative positions.
-* Examples:
-
-  * **Move off Open (MOO)**: Strength of move away from open price.
-  * **Gaps**: Open significantly above or below previous close.
-  * **Inside/Outside days**: Ranges contained within or exceeding prior days.
-* These patterns act as filters or confirmations for breakouts.
-
-### 3. **Volatility Contraction ¡æ Expansion**
-
-* Markets alternate between **quiet (narrow range)** and **volatile (expansion)** states.
-* Trading edge: Anticipate expansion after contraction.
-* **Techniques**:
-
-  * **NR7 (Narrow Range 7)**: Identify the narrowest range in the last 7 sessions.
-  * **2?Day NR, N?Day NR**: Look for multi?day tight ranges.
-* Narrow ranges often precede explosive moves.
-
-### 4. **NR7 Strategy**
-
-* Compute daily range = High ? Low.
-* Flag a day as **NR7** if it is the smallest range of the last 7 days.
-* Next session: Look for breakout beyond that narrow range.
-* Works best when combined with ORB and volume filters.
-
-### 5. **Bias & Context Filters**
-
-* Avoid using breakout/NR signals in isolation.
-* Add contextual bias:
-
-  * Market trend (e.g., index above moving averages).
-  * Sector strength.
-  * Macro conditions (events, news).
-* Enhances probability of valid breakout vs. false move.
-
-### 6. **Risk Management Rules**
-
-* **Stops**: Place stop at opposite end of opening range, or at ATR ¡¿ multiplier.
-* **Profit Taking**:
-
-  * Risk\:Reward ratio (e.g., 1:2).
-  * Time exit (close by end of session).
-* **Position Sizing**: Fixed fraction of equity; adjust after drawdowns.
-* **Avoid Overtrading**: Limit to best?scoring setups.
+- Founder of Crabel Capital Management, noted for decades of positive performance.
+- Specialist in short-term futures and equity index trading.
+- Core publication released in 1990 focusing on ORB and price pattern edges.
 
 ---
 
-## ?? Trade Workflow Example
+## Core Concepts
 
-1. **Pre?Market**: Identify stocks/futures with NR7 pattern yesterday.
-2. **Market Open**: Define opening range (first 15 minutes).
-3. **Signal**: If price breaks above/below ORB in direction consistent with bias, trigger alert.
-4. **Execution**:
+### Opening Range Breakout (ORB)
+- Define the opening range as the first X minutes after the market opens (commonly 5, 15, or 30 minutes).
+- Breakout triggers:
+  - **Long** when price clears the ORB high.
+  - **Short** when price breaks the ORB low.
+- Rationale: the opening captures liquidity, positioning, and directional bias for the session.
 
-   * Enter trade.
-   * Stop = opposite ORB level.
-   * Target = 2 ¡¿ risk or session close.
-5. **Review**: End of day logging, performance check.
+### Short-Term Price Patterns
+- Study relationships between open, high, low, and close.
+- Key filters: move-off-open (MOO), gap magnitude, and inside/outside day structures.
+- Patterns confirm whether an ORB signal reflects genuine momentum.
 
----
+### Volatility Contraction -> Expansion
+- Markets cycle between quiet and volatile phases.
+- Edge: anticipate expansion following extreme contraction.
+- Toolbox: NR7 (narrowest range in seven sessions) and multi-day narrow-range scans.
 
-## ?? Strengths vs Weaknesses
+### NR7 Implementation
+- Compute daily range = high - low.
+- Tag NR7 when the current range is the smallest of the previous seven days.
+- Monitor the next session for a breakout through the NR7 boundaries, ideally aligned with ORB triggers and volume upticks.
 
-| Strengths                                                     | Weaknesses                                                 |
-| ------------------------------------------------------------- | ---------------------------------------------------------- |
-| Structured, quantitative approach reduces emotion.            | False breakouts can cause frequent small losses.           |
-| Works across asset classes: equities, futures, commodities.   | Transaction costs can erode profitability in thin markets. |
-| Exploits universal market behavior (contraction ¡æ expansion). | Less effective in choppy, directionless regimes.           |
-| Clear rules for entry, stop, and exit.                        | Requires discipline; discretionary overrides hurt results. |
+### Bias & Context Filters
+- Avoid trading signals in isolation.
+- Add environmental bias via index trend, sector momentum, macro catalysts, and liquidity screens.
+- Improves selectivity and reduces false positives.
 
----
-
-## ?? Key Takeaways
-
-* Focus on **repeatable intraday price behaviors**.
-* **NR7 + ORB combo** is the cornerstone of Crabel¡¯s style.
-* **Context matters**: Always filter signals with broader market/sector bias.
-* **Risk discipline** is as important as pattern recognition.
-* Adapt time windows, stop sizes, and instruments to market traded (stocks, futures, FX, commodities).
-
----
-
-## ?? Application to Korean Markets
-
-* Define ORB during **09:00?09:15 KST**.
-* Use NR7 on daily charts for KOSPI/KOSDAQ constituents.
-* Add liquidity filters (e.g., daily trading value ¡Ã 50¾ï KRW).
-* Monitor gaps caused by foreign institutional flows.
-* Combine sector momentum (e.g., semiconductors, bio, finance) with breakout signals.
+### Risk Management
+- Stops: opposite ORB boundary or ATR-based multiplier.
+- Targets: fixed risk:reward (e.g., 1:2) or session close.
+- Position sizing: fixed-fraction or volatility-adjusted exposure; reduce size after drawdowns.
+- Discipline: limit trades to the highest-scoring setups.
 
 ---
 
-## ?? References
-
-* Crabel, T. (1990). *Day Trading with Short?Term Price Patterns & Opening Range Breakout*.
-* Crabel Capital Management ? performance reports.
-* Quantified Strategies, GFF Brokers, OxfordStrat: public summaries of NR7 and ORB.
+## Trade Workflow
+1. **Pre-market**: shortlist instruments showing NR7 or narrow-range clusters.
+2. **Opening window**: record high/low for the chosen ORB duration.
+3. **Signal check**: confirm breakout aligns with broader bias filters before triggering.
+4. **Execution**: enter, apply stop/target rules, and monitor position through the session.
+5. **Review**: log trade metrics and update performance dashboards end-of-day.
 
 ---
 
-**Disclaimer**: This summary is for educational purposes. Trading financial markets involves risk, and past performance is not indicative of future results.
+## Strengths vs. Weaknesses
 
+| Strengths                                                   | Weaknesses                                                |
+| ----------------------------------------------------------- | --------------------------------------------------------- |
+| Quantitative structure limits emotional decisions.          | False breakouts can produce frequent small losses.        |
+| Works across equities, futures, and commodities.            | Transaction costs can erode gains in thin instruments.    |
+| Exploits recurring contraction/expansion dynamics.          | Underperforms in choppy, directionless regimes.           |
+| Clear entry, stop, and exit rules support automation.       | Requires strict discipline; discretionary overrides hurt. |
+
+---
+
+## Applying to Korean Markets
+- Set the ORB window for KST (e.g., 09:00-09:15).
+- Run NR7 scans on KOSPI/KOSDAQ universes and enforce liquidity thresholds (>= 5e9 KRW).
+- Track foreign flow-driven gaps and sector momentum (semiconductor, bio, finance, etc.).
+- Combine ORB alerts with KR-ORB-Filter scoring to prioritize tradeable symbols.
+
+---
+
+## References
+- Crabel, T. (1990). *Day Trading with Short-Term Price Patterns & Opening Range Breakout*.
+- Crabel Capital Management performance disclosures.
+- Public write-ups on NR7 and ORB from Quantified Strategies, GFF Brokers, and OxfordStrat.
+
+> DISCLAIMER: Educational summary only. Trading involves risk; past results do not guarantee future performance.

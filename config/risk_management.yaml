@@ -1,0 +1,178 @@
+# Risk Management Configuration
+# Comprehensive risk management settings for Linda Raschke strategies
+
+# Position Sizing Rules
+position_sizing:
+  method: "fixed_risk"  # Options: fixed_risk, fixed_amount, kelly, optimal_f
+  base_risk_per_trade: 0.02        # 2% of account per trade
+  max_risk_per_trade: 0.025        # 2.5% maximum under any circumstances
+  min_position_size: 0.001         # 0.1% minimum position
+  max_position_size: 0.05          # 5% maximum position
+
+  # Portfolio heat management
+  max_total_exposure: 0.08         # 8% maximum total portfolio risk
+  max_correlated_exposure: 0.05    # 5% maximum in correlated positions
+  correlation_threshold: 0.7       # Correlation threshold for reduction
+
+  # Dynamic sizing based on market conditions
+  volatility_adjustment: true
+  high_vol_size_reduction: 0.5     # 50% size reduction in high volatility
+  low_vol_size_increase: 1.2       # 20% size increase in low volatility
+
+# Stop Loss Management
+stop_loss:
+  # Primary stop method priority order
+  stop_priority:
+    - "technical"
+    - "volatility"
+    - "money_management"
+    - "time"
+
+  # Technical stops
+  technical_stops:
+    enabled: true
+    support_resistance_buffer: 0.01  # 1% buffer beyond S/R levels
+    pattern_invalidation: true       # Stop at pattern invalidation
+    trendline_break: true           # Stop at trendline break
+
+  # Volatility stops
+  volatility_stops:
+    enabled: true
+    atr_multiplier: 1.5             # 1.5x ATR stop distance
+    min_atr_multiplier: 1.0         # Minimum ATR multiplier
+    max_atr_multiplier: 2.5         # Maximum ATR multiplier
+    adaptive_multiplier: true       # Adjust based on market conditions
+
+  # Money management stops
+  money_management_stops:
+    enabled: true
+    max_loss_per_trade: 0.02        # 2% maximum loss per trade
+    account_based: true             # Calculate from total account value
+
+  # Time stops
+  time_stops:
+    enabled: true
+    max_holding_period: 5           # 5 days maximum
+    intraday_exit_time: "15:00"     # Exit by 3 PM if no movement
+    weekend_exit: false             # Don't force weekend exits
+
+# Profit Taking Strategy
+profit_taking:
+  method: "scale_out"              # Options: scale_out, trailing_stop, target_exit
+
+  scale_out_rules:
+    enabled: true
+    first_exit: 0.33               # Exit 1/3 at first target
+    second_exit: 0.33              # Exit 1/3 at second target
+    final_exit: 0.34               # Trail remaining 1/3
+
+    # Target levels
+    first_target_rr: 1.0           # 1:1 risk/reward ratio
+    second_target_rr: 2.0          # 2:1 risk/reward ratio
+
+    # Stop advancement
+    breakeven_at_first_target: true
+    trail_after_second_target: true
+
+  trailing_stops:
+    enabled: true
+    initial_trail_rr: 1.0          # Start trailing after 1:1
+    trail_method: "atr"            # Options: atr, percentage, chandelier
+    atr_trail_multiplier: 1.0      # 1x ATR trailing distance
+    percentage_trail: 0.05         # 5% trailing stop
+
+    # Advanced trailing
+    accelerated_trail: true        # Tighten trail in strong moves
+    volatility_adjusted: true      # Adjust trail distance by volatility
+
+# Risk Monitoring and Alerts
+risk_monitoring:
+  real_time_monitoring: true
+
+  # Portfolio level alerts
+  portfolio_alerts:
+    total_risk_warning: 0.06       # Warn at 6% total risk
+    total_risk_maximum: 0.08       # Block new trades at 8%
+    drawdown_warning: 0.10         # Warn at 10% drawdown
+    drawdown_maximum: 0.15         # Reduce size at 15% drawdown
+
+  # Position level alerts
+  position_alerts:
+    adverse_move_warning: 0.015    # Warn at 1.5% adverse move
+    time_decay_warning: 3          # Warn after 3 days no movement
+    correlation_warning: 0.8       # Warn on high correlation
+
+# Market Condition Adjustments
+market_adjustments:
+  volatility_regime:
+    low_volatility:
+      size_multiplier: 1.2         # Increase size 20%
+      stop_multiplier: 0.8         # Tighter stops
+      target_multiplier: 0.8       # Closer targets
+
+    normal_volatility:
+      size_multiplier: 1.0         # Normal sizing
+      stop_multiplier: 1.0         # Normal stops
+      target_multiplier: 1.0       # Normal targets
+
+    high_volatility:
+      size_multiplier: 0.6         # Reduce size 40%
+      stop_multiplier: 1.5         # Wider stops
+      target_multiplier: 1.5       # Extended targets
+
+  market_trend:
+    strong_bull:
+      long_bias_multiplier: 1.2    # Favor long positions
+      short_bias_multiplier: 0.6   # Reduce short positions
+
+    strong_bear:
+      long_bias_multiplier: 0.6    # Reduce long positions
+      short_bias_multiplier: 1.2   # Favor short positions
+
+    sideways:
+      mean_reversion_multiplier: 1.3  # Favor mean reversion
+      breakout_multiplier: 0.7        # Reduce breakout trades
+
+# Strategy-Specific Risk Rules
+strategy_risk_rules:
+  holy_grail:
+    max_risk_per_trade: 0.02
+    stop_method: "technical"
+    profit_target_rr: 2.0
+
+  turtle_soup:
+    max_risk_per_trade: 0.015      # Lower risk for counter-trend
+    stop_method: "pattern_invalidation"
+    profit_target_rr: 1.5
+
+  anti_swing:
+    max_risk_per_trade: 0.015      # Lower risk for mean reversion
+    stop_method: "time"            # Quick exit if no movement
+    max_holding_days: 3
+
+  enhanced_orb:
+    max_risk_per_trade: 0.02
+    stop_method: "volatility"
+    profit_target_rr: 2.0
+
+  volatility_breakout:
+    max_risk_per_trade: 0.025      # Higher risk for momentum
+    stop_method: "volatility"
+    profit_target_rr: 3.0
+
+# Emergency Risk Controls
+emergency_controls:
+  circuit_breakers:
+    daily_loss_limit: 0.05         # 5% daily loss limit
+    weekly_loss_limit: 0.10        # 10% weekly loss limit
+    monthly_loss_limit: 0.15       # 15% monthly loss limit
+
+  auto_shutdown_triggers:
+    consecutive_losses: 5          # Shutdown after 5 consecutive losses
+    rapid_drawdown: 0.08          # Shutdown at 8% rapid drawdown
+    system_malfunction: true       # Shutdown on technical issues
+
+  recovery_protocols:
+    reduced_size_period: 10        # Trade smaller for 10 days after shutdown
+    size_reduction_factor: 0.5     # 50% size reduction
+    gradual_increase: true         # Gradually increase back to normal
