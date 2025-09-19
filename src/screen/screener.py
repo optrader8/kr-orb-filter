@@ -26,18 +26,40 @@ class DailyScreener:
 
     def run(self, daily_data: pd.DataFrame, market_index: pd.Series, sector_index: pd.Series) -> pd.DataFrame:
         """Compute features, score securities, persist results, and return ranked frame."""
-        frame = daily_data.copy()
-        frame["nr7"] = nr7_flag(frame["high"], frame["low"])
-        frame["gap_pct"] = gap_percent(frame["open"], frame["prev_close"])
-        frame["moo"] = move_off_open(frame["open"], frame["close"], frame["high"], frame["low"])
-        frame["kospi_bias"] = kospi_bias(market_index).reindex(frame.index)
-        frame["sector_momentum"] = sector_momentum(sector_index).reindex(frame.index)
-        frame["score"] = frame.apply(self._score_row, axis=1)
-        screened = frame[frame["liquidity"] >= self.settings.liquidity_min]
+        frame = self._ensure_multiindex(daily_data)
+        featured = frame.groupby(level="symbol", group_keys=False).apply(self._apply_symbol_features)
+        dates = featured.index.get_level_values("date")
+        featured["kospi_bias"] = kospi_bias(market_index).reindex(dates).values
+        featured["sector_momentum"] = sector_momentum(sector_index).reindex(dates).values
+        featured["score"] = featured.apply(self._score_row, axis=1)
+        latest = featured.groupby(level="symbol").tail(1)
+        screened = latest[latest["liquidity"] >= self.settings.liquidity_min]
         ranked = screened.sort_values("score", ascending=False)
-        self.store.save_dataframe(ranked, "daily_screener")
+        self.store.save_dataframe(ranked.reset_index(), "daily_screener")
         self.store.save_metadata(self._metadata(ranked), "daily_screener_meta")
         return ranked
+
+    def _apply_symbol_features(self, group: pd.DataFrame) -> pd.DataFrame:
+        group = group.sort_index()
+        if "prev_close" not in group.columns:
+            group["prev_close"] = group["close"].shift(1)
+        if "liquidity" not in group.columns:
+            volume = group.get("volume", pd.Series(0, index=group.index))
+            group["liquidity"] = group["close"] * volume
+        group["nr7"] = nr7_flag(group["high"], group["low"])
+        group["gap_pct"] = gap_percent(group["open"], group["prev_close"])
+        group["moo"] = move_off_open(group["open"], group["close"], group["high"], group["low"])
+        return group.dropna(subset=["prev_close"])
+
+    def _ensure_multiindex(self, frame: pd.DataFrame) -> pd.DataFrame:
+        result = frame.copy()
+        if not isinstance(result.index, pd.MultiIndex):
+            if "symbol" not in result.columns:
+                raise ValueError("daily_data must include a symbol level or column")
+            result = result.set_index("symbol", append=True)
+            result = result.reorder_levels(["symbol", result.index.name or "index"]).sort_index()
+        result.index = result.index.set_names(["symbol", "date"])
+        return result
 
     def _score_row(self, row: pd.Series) -> int:
         score = 0

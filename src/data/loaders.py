@@ -97,8 +97,11 @@ class DailyDataLoader:
         )
         if self.cache_dir:
             cache_file = self.cache_dir / f"{request.symbol}_{request.start}_{request.end}.parquet"
-            frame.to_parquet(cache_file)
-            logger.debug("Cached OHLCV to %s", cache_file)
+            try:
+                frame.to_parquet(cache_file)
+                logger.debug("Cached OHLCV to %s", cache_file)
+            except (ImportError, ValueError, ModuleNotFoundError) as error:
+                logger.debug("Skipping parquet cache: %s", error)
         frame.attrs["checksum"] = checksum
         frame.attrs["requested_at"] = dt.datetime.utcnow()
         return frame
