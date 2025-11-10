@@ -260,8 +260,33 @@ class PositionSizer:
             self.current_positions.pop(symbol, None)
 
     def update_correlations(self, correlations: Dict[Tuple[str, str], float]):
-        """Update correlation matrix for position sizing."""
+        """
+        Update correlation matrix for position sizing.
+
+        Args:
+            correlations: Dictionary with (symbol1, symbol2) tuples as keys and correlation values
+
+        Example:
+            correlations = {
+                ('AAPL', 'MSFT'): 0.85,
+                ('AAPL', 'GOOGL'): 0.72,
+                ('MSFT', 'GOOGL'): 0.80
+            }
+            position_sizer.update_correlations(correlations)
+        """
         self.current_correlations.update(correlations)
+
+    def load_correlations_from_calculator(self, correlation_analysis):
+        """
+        Load correlations from CorrelationAnalysis object.
+
+        Args:
+            correlation_analysis: CorrelationAnalysis object from correlation.py
+        """
+        from src.risk.correlation import convert_correlations_to_position_sizer_format
+
+        correlations = convert_correlations_to_position_sizer_format(correlation_analysis)
+        self.update_correlations(correlations)
 
     def calculate_kelly_criterion(
         self,

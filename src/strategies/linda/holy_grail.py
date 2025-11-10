@@ -135,64 +135,88 @@ class HolyGrailStrategy:
         return result
 
     def _detect_uptrend_pullback(self, highs: pd.Series, lows: pd.Series, bars: int) -> pd.Series:
-        """Detect pullback in uptrend (series of lower highs and/or lower lows)."""
+        """Detect pullback in uptrend (series of lower highs and/or lower lows) - VECTORIZED."""
+        # Vectorized approach using rolling windows and shift
         pullback = pd.Series(False, index=highs.index)
 
-        for i in range(bars, len(highs)):
-            # Check if we have consecutive lower highs
-            lower_highs = True
-            for j in range(1, bars):
-                if highs.iloc[i - j] >= highs.iloc[i - j - 1]:
-                    lower_highs = False
-                    break
+        # Check for consecutive lower highs using rolling comparison
+        # For each bar, check if highs are consecutively declining
+        consecutive_lower = pd.Series(True, index=highs.index)
 
-            # Check if recent high is lower than high before pullback started
-            if lower_highs and i >= bars + 1:
-                recent_high = highs.iloc[i - bars + 1:i + 1].max()
-                prior_high = highs.iloc[i - bars - 1]
-                pullback.iloc[i] = recent_high < prior_high
+        for j in range(1, bars):
+            consecutive_lower &= (highs.shift(j) < highs.shift(j + 1))
+
+        # Check if recent high is lower than high before pullback started
+        recent_high = highs.rolling(window=bars).max()
+        prior_high = highs.shift(bars + 1)
+
+        pullback = consecutive_lower & (recent_high < prior_high)
+
+        # Set first (bars + 1) values to False as we don't have enough data
+        pullback.iloc[:bars + 1] = False
 
         return pullback
 
     def _detect_downtrend_pullback(self, highs: pd.Series, lows: pd.Series, bars: int) -> pd.Series:
-        """Detect pullback in downtrend (series of higher lows and/or higher highs)."""
+        """Detect pullback in downtrend (series of higher lows and/or higher highs) - VECTORIZED."""
+        # Vectorized approach using rolling windows and shift
         pullback = pd.Series(False, index=lows.index)
 
-        for i in range(bars, len(lows)):
-            # Check if we have consecutive higher lows
-            higher_lows = True
-            for j in range(1, bars):
-                if lows.iloc[i - j] <= lows.iloc[i - j - 1]:
-                    higher_lows = False
-                    break
+        # Check for consecutive higher lows using rolling comparison
+        # For each bar, check if lows are consecutively rising
+        consecutive_higher = pd.Series(True, index=lows.index)
 
-            # Check if recent low is higher than low before pullback started
-            if higher_lows and i >= bars + 1:
-                recent_low = lows.iloc[i - bars + 1:i + 1].min()
-                prior_low = lows.iloc[i - bars - 1]
-                pullback.iloc[i] = recent_low > prior_low
+        for j in range(1, bars):
+            consecutive_higher &= (lows.shift(j) > lows.shift(j + 1))
+
+        # Check if recent low is higher than low before pullback started
+        recent_low = lows.rolling(window=bars).min()
+        prior_low = lows.shift(bars + 1)
+
+        pullback = consecutive_higher & (recent_low > prior_low)
+
+        # Set first (bars + 1) values to False as we don't have enough data
+        pullback.iloc[:bars + 1] = False
 
         return pullback
 
     def _calculate_pullback_depth(self, data: pd.DataFrame, pullback_data: pd.DataFrame) -> pd.Series:
-        """Calculate the depth of pullbacks as percentage of recent range."""
-        depth = pd.Series(0.0, index=data.index)
-
+        """Calculate the depth of pullbacks as percentage of recent range - VECTORIZED."""
         lookback = max(self.pullback_max_bars + 2, 10)
 
-        for i in range(lookback, len(data)):
-            if pullback_data['any_pullback'].iloc[i]:
-                # Calculate pullback depth
-                recent_range = data['high'].iloc[i-lookback:i].max() - data['low'].iloc[i-lookback:i].min()
-                if recent_range > 0:
-                    if pullback_data['uptrend_pullback'].iloc[i]:
-                        pullback_move = data['high'].iloc[i-lookback:i].max() - data['low'].iloc[i]
-                    else:
-                        pullback_move = data['high'].iloc[i] - data['low'].iloc[i-lookback:i].min()
+        # Vectorized calculation using rolling windows
+        high_max = data['high'].rolling(window=lookback).max()
+        low_min = data['low'].rolling(window=lookback).min()
+        recent_range = high_max - low_min
 
-                    depth.iloc[i] = pullback_move / recent_range
+        # Calculate pullback moves for uptrends and downtrends
+        uptrend_pullback_move = high_max - data['low']
+        downtrend_pullback_move = data['high'] - low_min
 
-        return depth
+        # Select appropriate pullback move based on trend
+        pullback_move = pd.Series(0.0, index=data.index)
+        pullback_move = np.where(
+            pullback_data['uptrend_pullback'],
+            uptrend_pullback_move,
+            np.where(
+                pullback_data['downtrend_pullback'],
+                downtrend_pullback_move,
+                0.0
+            )
+        )
+
+        # Calculate depth (avoid division by zero)
+        depth = pd.Series(0.0, index=data.index)
+        depth = np.where(
+            pullback_data['any_pullback'] & (recent_range > 0),
+            pullback_move / recent_range,
+            0.0
+        )
+
+        # Set first lookback values to 0
+        depth[:lookback] = 0.0
+
+        return pd.Series(depth, index=data.index)
 
     def _generate_signals(self, data: pd.DataFrame, analysis: pd.DataFrame) -> pd.DataFrame:
         """Generate Holy Grail entry signals."""
