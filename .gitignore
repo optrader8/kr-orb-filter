@@ -1,4 +1,33 @@
-__pycahe__
-env/
-venv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 
+# Virtual environments
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+data/cache/
+data/store/
+*.db
+*.log
+
+# Environment variables
+.env
+.env.local
